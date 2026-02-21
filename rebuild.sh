@@ -13,12 +13,9 @@ echo "Building NixOS for $(hostname)..."
 sudo nixos-rebuild switch --flake .
 
 # 4. Get metadata for the commit
-gen=$(sudo nixos-rebuild list-generations | grep current | awk '{print $1}')
+# This version works better because it doesn't rely on the word "current"
+gen=$(sudo nix-env --list-generations --profile /nix/var/nix/profiles/system | tail -n 1 | awk '{print $1}')
 host=$(hostname)
-
-# 4.1 Capture the names of modified files
-# We use sed to trim the trailing space
-changes=$(git status --porcelain | awk '{print $2}' | tr '\n' ' ' | sed 's/ $//')
 
 # 5. Detailed commit logic
 # Corrected the quotes here: "$changes"
