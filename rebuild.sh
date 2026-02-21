@@ -2,23 +2,36 @@
 set -e
 cd /etc/nixos
 
-# 1. Stage all changes
+# 1. Capture names of modified files BEFORE staging them
+changes=$(git status --porcelain | awk '{print $2}' | tr '\n' ' ' | sed 's/ $//')
+
+# 2. Stage all changes
 git add .
 
-# 2. Build and Switch
+# 3. Build and Switch
 echo "Building NixOS for $(hostname)..."
 sudo nixos-rebuild switch --flake .
 
-# 3. Get metadata for the commit
+# 4. Get metadata for the commit
 gen=$(sudo nixos-rebuild list-generations | grep current | awk '{print $1}')
 host=$(hostname)
-# This captures the names of any files you modified
-changes=$(git status --porcelain | awk '{print $2}' | tr '\n' ' ')
 
-# 4. Commit with detailed info
-git commit -m "$host Update: Gen $gen | Files: $changes"
+# 4.1 Capture the names of modified files
+# We use sed to trim the trailing space
+changes=$(git status --porcelain | awk '{print $2}' | tr '\n' ' ' | sed 's/ $//')
 
-# 5. Push to GitHub
+# 5. Detailed commit logic
+# Corrected the quotes here: "$changes"
+if [ -z "$changes" ]; then
+    msg="$host: Refresh Gen $gen"
+else
+    # Added $gen back into this message string
+    msg="$host: Update Gen $gen | Modified: $changes"
+fi
+
+git commit -m "$msg"
+
+# 6. Push to GitHub
 echo "Syncing with GitHub..."
 git push origin main
 

@@ -95,4 +95,7 @@
     # This now runs your script which handles git add, build, and commit
     nix-up = "/etc/nixos/rebuild.sh";
   };
+
+  # Limit the Boot Menu Entries
+  boot.loader.systemd-boot.configurationLimit = 1;
 }
