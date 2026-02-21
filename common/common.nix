@@ -71,6 +71,13 @@
 
   services.tailscale.enable = true;
 
+  # Force GNOME to show all three window buttons
+  programs.dconf.enable = true;
+  services.xserver.desktopManager.gnome.extraGSettingsOverrides = ''
+    [org.gnome.desktop.wm.preferences]
+    button-layout='appmenu:minimize,maximize,close'
+  '';
+
   # --- AUTOMATION & COMPATIBILITY ---
   programs.nix-ld.enable = true; # Needed for Conda/VS Code binaries
   programs.direnv = {
@@ -107,6 +114,7 @@
   boot.loader.systemd-boot.configurationLimit = 1;
 
   # Adding SyncThing to my NixOS Machines
+/*
   services.syncthing = {
     enable = true;
     user = "michael";
@@ -130,5 +138,5 @@
         };
       };
     };
-  };
+  };*/
 }
