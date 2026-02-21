@@ -64,6 +64,11 @@
     tailscale
   ];
 
+  # This allows direnv to hook into your bash shell
+  programs.bash.interactiveShellInit = ''
+    eval "$(direnv hook bash)"
+  '';
+
   # --- AUTOMATION & COMPATIBILITY ---
   programs.nix-ld.enable = true; # Needed for Conda/VS Code binaries
   programs.direnv = {
@@ -98,4 +103,30 @@
 
   # Limit the Boot Menu Entries
   boot.loader.systemd-boot.configurationLimit = 1;
+
+  # Adding SyncThing to my NixOS Machines
+  services.syncthing = {
+    enable = true;
+    user = "michael";
+    dataDir = "/home/michael/Documents";    # Default folder for synced data
+    configDir = "/home/michael/.config/syncthing";
+    overrideDevices = true;     # Allows you to manage devices via Nix
+    overrideFolders = true;     # Allows you to manage folders via Nix
+    settings = {
+      devices = {
+        "Mini-PC" = { id = "DEVICE-ID-OF-YOUR-MINI-PC"; };
+        "Synology-NAS" = { id = "DEVICE-ID-OF-YOUR-NAS"; };
+      };
+      folders = {
+        "University" = {        # Your Master of Data Science work
+          path = "/home/michael/Documents/University";
+          devices = [ "Mini-PC" "Synology-NAS" ];
+        };
+        "Obsidian" = {          # Your linked knowledge base
+          path = "/home/michael/Documents/Obsidian";
+          devices = [ "Mini-PC" "Synology-NAS" ];
+        };
+      };
+    };
+  };
 }
