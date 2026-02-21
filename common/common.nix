@@ -55,6 +55,8 @@
     obsidian
     git
     direnv
+    discord
+    vesktop # Optional: Great for better screen sharing on Wayland/GNOME
     nix-direnv
     conda
     gnomeExtensions.dash-to-panel
