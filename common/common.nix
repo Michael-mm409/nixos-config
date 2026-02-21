@@ -57,6 +57,7 @@
     direnv
     discord
     vesktop # Optional: Great for better screen sharing on Wayland/GNOME
+    ticktick
     nix-direnv
     conda
     gnomeExtensions.dash-to-panel
