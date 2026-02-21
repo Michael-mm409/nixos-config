@@ -75,11 +75,12 @@
 
   # Force GNOME to show all three window buttons
   programs.dconf.enable = true;
-  services.xserver.desktopManager.gnome.extraGSettingsOverrides = ''
+  /*
+  services.desktopManager.gnome.extraGSettingsOverrides = ''
     [org.gnome.desktop.wm.preferences]
     button-layout='appmenu:minimize,maximize,close'
   '';
-
+*/
   # --- AUTOMATION & COMPATIBILITY ---
   programs.nix-ld.enable = true; # Needed for Conda/VS Code binaries
   programs.direnv = {
