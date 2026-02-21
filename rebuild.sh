@@ -15,7 +15,8 @@ sudo nixos-rebuild switch --flake .
 sleep 1 
 
 # 4. Get the NEWEST generation number
-gen=$(sudo nix-env --list-generations --profile /nix/var/nix/profiles/system | tail -n 1 | awk '{print $1}')
+# This looks at the system profile which is what the bootloader uses
+gen=$(sudo nix-env -p /nix/var/nix/profiles/system --list-generations | tail -n 1 | awk '{print $1}')
 host=$(hostname)
 
 # 5. Commit with the accurate Gen number
