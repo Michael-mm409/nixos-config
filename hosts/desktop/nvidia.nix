@@ -29,4 +29,7 @@
   
   # Kernel parameters to ensure Blackwell GPUs boot smoothly
   boot.kernelParams = [ "nvidia-drm.fbdev=1" ];
+
+  # Ensure Conda/Python can use the 5070-TI for AI tasks
+  hardware.graphics.extraPackages = [ pkgs.nvidia-vaapi-driver ];
 }
