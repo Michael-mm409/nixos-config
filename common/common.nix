@@ -56,6 +56,7 @@
     git
     direnv
     nix-direnv
+    conda
     gnomeExtensions.dash-to-panel
     gnomeExtensions.arc-menu
     gnomeExtensions.appindicator
