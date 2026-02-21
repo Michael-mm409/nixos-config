@@ -61,6 +61,7 @@
     gnomeExtensions.arc-menu
     gnomeExtensions.appindicator
     gnome-tweaks
+    tailscale
   ];
 
   # --- AUTOMATION & COMPATIBILITY ---

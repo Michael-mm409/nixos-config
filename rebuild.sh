@@ -1,24 +1,25 @@
 #!/usr/bin/env bash
-# /etc/nixos/rebuild.sh
-
-set -e # Exit immediately if a command fails
-
-# 1. Navigate to config directory
+set -e
 cd /etc/nixos
 
-# 2. Stage all changes (required for Flakes to see new files)
-sudo git add .
+# 1. Stage all changes
+git add .
 
-# 3. Run the rebuild
-# It uses your current hostname to automatically select the right Flake output
-echo "Building NixOS..."
+# 2. Build and Switch
+echo "Building NixOS for $(hostname)..."
 sudo nixos-rebuild switch --flake .
 
-# 4. If we reach here, the build succeeded! 
-# Get the new generation number for the commit message
-gen=$(nixos-rebuild list-generations | grep current | awk '{print $1}')
+# 3. Get metadata for the commit
+gen=$(sudo nixos-rebuild list-generations | grep current | awk '{print $1}')
+host=$(hostname)
+# This captures the names of any files you modified
+changes=$(git status --porcelain | awk '{print $2}' | tr '\n' ' ')
 
-# 5. Commit with a helpful message
-sudo git commit -m "NixOS Update: Generation $gen ($(date +'%Y-%m-%d %H:%M'))"
+# 4. Commit with detailed info
+git commit -m "$host Update: Gen $gen | Files: $changes"
 
-echo "Done! Configuration built and committed as Generation $gen."
+# 5. Push to GitHub
+echo "Syncing with GitHub..."
+git push origin main
+
+echo "Done! Generation $gen is live on GitHub."
