@@ -1,29 +1,33 @@
 {
   description = "Michael's Multi-PC Config";
 
-  inputs.nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
+    # Add this input
+    nix-flatpak.url = "github:gmodena/nix-flatpak";
+  };
 
-  outputs = { self, nixpkgs, ... }: {
+  outputs = { self, nixpkgs, nix-flatpak, ... }@inputs: {
     nixosConfigurations = {
-      # Matches hostname 'nixos-laptop'
       nixos-laptop = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [ 
+          nix-flatpak.nixosModules.nix-flatpak # Add this
           ./hosts/laptop/configuration.nix 
           ./common/common.nix
-          ./hosts/laptop/battery.nix 	# Only for laptop!
-	  ./hosts/laptop/storage.nix	# Laptop-specific UUID here
+          ./hosts/laptop/battery.nix 
+          ./hosts/laptop/storage.nix 
         ];
       };
 
-      # Matches hostname 'nixos-desktop'
       nixos-desktop = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [ 
+          nix-flatpak.nixosModules.nix-flatpak # Add this
           ./hosts/desktop/configuration.nix 
-          ./common/common.nix			# My shared identity/apps
-          ./hosts/desktop/nvidia.nix		# Your 5070-TI drivers
-	  ./hosts/desktop/storage.nix		# My BTRFS storage logic
+          ./common/common.nix 
+          ./hosts/desktop/nvidia.nix 
+          ./hosts/desktop/storage.nix 
         ];
       };
     };

@@ -27,7 +27,6 @@
 
   services.displayManager.gdm.enable = true;
   services.desktopManager.gnome.enable = true;
-  services.flatpak.enable = true;
 
   # Sound and Printing
   services.printing.enable = true;
@@ -55,9 +54,7 @@
     obsidian
     git
     direnv
-    discord
     vesktop # Optional: Great for better screen sharing on Wayland/GNOME
-    ticktick
     nix-direnv
     conda
     gnomeExtensions.dash-to-panel
@@ -69,13 +66,22 @@
 
   # This allows direnv to hook into your bash shell
   programs.bash.interactiveShellInit = ''
-    eval "$(direnv hook bash)"
   '';
 
   services.tailscale.enable = true;
 
   # Force GNOME to show all three window buttons
   programs.dconf.enable = true;
+
+  services.flatpak = {
+    enable = true;
+    update.onActivation = true; # Automatically updates apps on rebuild
+    packages = [
+      "com.ticktick.TickTick"     # Version 8.0.0
+      "com.discordapp.Discord"   # No more update-loop breaks
+    ];
+  };
+
   /*
   services.desktopManager.gnome.extraGSettingsOverrides = ''
     [org.gnome.desktop.wm.preferences]
