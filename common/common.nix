@@ -69,6 +69,8 @@
     eval "$(direnv hook bash)"
   '';
 
+  services.tailscale.enable = true;
+
   # --- AUTOMATION & COMPATIBILITY ---
   programs.nix-ld.enable = true; # Needed for Conda/VS Code binaries
   programs.direnv = {
