@@ -16,4 +16,6 @@
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
   system.stateVersion = "25.11"; 
+  nix.settings.max-jobs = 16;
+  nix.setings.cores = 0;  # Use all available cores for building
 }

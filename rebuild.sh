@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -e
-cd /etc/nixos
+
+SCRIPTPATH="/etc/nixos"
+cd "$SCRIPTPATH"
 
 # 1. Capture names of modified files BEFORE staging them
 changes=$(git status --porcelain | awk '{print $2}' | tr '\n' ' ' | sed 's/ $//')
