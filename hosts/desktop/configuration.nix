@@ -13,9 +13,9 @@
   boot.loader.efi.canTouchEfiVariables = true;
 
   # Ensure the i7-13700K has the latest patches for the 5070-Ti
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.kernelPackages = pkgs.linuxPackages;
 
   system.stateVersion = "25.11"; 
   nix.settings.max-jobs = 16;
-  nix.setings.cores = 0;  # Use all available cores for building
+  nix.settings.cores = 0;  # Use all available cores for building
 }

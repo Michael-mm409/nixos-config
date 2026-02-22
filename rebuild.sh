@@ -1,23 +1,29 @@
 #!/usr/bin/env bash
 set -e
-SCRIPTPATH="/etc/nixos"
-cd "$SCRIPTPATH"
+pushd ~/nixos-config
 
-# 1. Capture changes
+# 1. Capture changes before adding them
 changes=$(git status --porcelain | awk '{print $2}' | tr '\n' ' ' | sed 's/ $//')
 
 # 2. Stage and Build
 git add .
-echo "Building NixOS for $(hostname)..."
-sudo nixos-rebuild switch --flake .
+host=$(hostname)
+echo "Building NixOS for $host..."
 
-# 3. THE FIX: Wait a moment for the system to register the new generation
+# THE FIX: Target the specific host and use 'boot' if storage/hardware changed
+# This avoids the 'home.mount' busy error on the desktop
+if git diff --cached --name-only | grep -E "storage.nix|hardware-configuration.nix"; then
+    echo "⚠️  Storage changes detected. Using 'boot' mode..."
+    sudo nixos-rebuild boot --flake .#$host
+else
+    sudo nixos-rebuild switch --flake .#$host
+fi
+
+# 3. Wait a moment for the system to register the new generation
 sleep 1 
 
 # 4. Get the NEWEST generation number
-# This looks at the system profile which is what the bootloader uses
 gen=$(sudo nix-env -p /nix/var/nix/profiles/system --list-generations | tail -n 1 | awk '{print $1}')
-host=$(hostname)
 
 # 5. Commit with the accurate Gen number
 if [ -z "$changes" ]; then
@@ -29,3 +35,5 @@ fi
 git commit -m "$msg"
 git push origin main
 echo "Done! Generation $gen is now officially live on GitHub."
+
+popd

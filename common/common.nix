@@ -117,7 +117,7 @@
 
   environment.shellAliases = {
     # This now runs your script which handles git add, build, and commit
-    nix-up = "/etc/nixos/rebuild.sh";
+    nix-up = "$HOME/nixos-config/rebuild.sh";
   };
 
   # Limit the Boot Menu Entries
@@ -149,4 +149,8 @@
       };
     };
   };*/
+
+  networking.nameservers =
+  [ "1.1.1.1" "8.8.8.8" ];
+  networking.enableIPv6 = false;
 }
