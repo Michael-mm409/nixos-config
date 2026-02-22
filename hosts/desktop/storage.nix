@@ -1,6 +1,6 @@
 { config, pkgs, ... }: {
   fileSystems."/home" = {
-    device = "/dev/disk/by-uuid/22985a39-abf7-4ed3-806b-f1e0dda4923d";
+    device = "/dev/disk/by-uuid/a3886784-3f1a-41d4-8428-8852c13a71e8";
     fsType = "btrfs";
     # Optimized for your high-performance desktop NVMe
     options = [ 
