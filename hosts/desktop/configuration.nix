@@ -4,6 +4,7 @@
   imports = [ 
     ./hardware-configuration.nix  # We will generate this on the desktop machine
     ./storage.nix
+    ./nvidia.nix
   ];
 
   # Identifies this machine for the Flake
