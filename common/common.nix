@@ -153,17 +153,25 @@
     overrideDevices = true;     # Allows you to manage devices via Nix
     overrideFolders = true;     # Allows you to manage folders via Nix
     settings = {
-      devices = {
-        "Mini-PC" = { id = "DPXSJKH-FOKSL3Q-JN6CNRK-FWSB2SU-3IVMXSC-ZVB6UYB-GI36JOV-QAGB2QF"; addresses = [ "default" "tcp://100.70.100.118" ]; };
-        "Synology-NAS" = { id = "YODIB4K-XHNL3CB-VVEHUJM-YDSBTHU-EZB4AVN-VO3XDCI-F7EQNW7-NCUQLAT"; addresses = [ "default" "tcp://100.90.5.80" ]; };
-      };
+       devices = {
+        "Mini-PC" = { 
+          id = "DPXSJKH-FOKSL3Q-JN6CNRK-FWSB2SU-3IVMXSC-ZVB6UYB-GI36JOV-QAGB2QF"; 
+          # Use a space between "default" and the IP, ensure no trailing commas
+          addresses = [ "default" "tcp://100.70.100.118" ]; 
+        };
+        "Synology-NAS" = { 
+          id = "YODIB4K-XHNL3CB-VVEHUJM-YDSBTHU-EZB4AVN-VO3XDCI-F7EQNW7-NCUQLAT"; 
+          addresses = [ "default" "tcp://100.90.5.80" ]; 
+        };
+      }; 
+     };
       folders = {
         "University" = {        # Your Master of Data Science work
           path = "/home/michael/Documents/University";
           devices = [ "Mini-PC" "Synology-NAS" ];
         };
       };
-    };
+   
   };
 
   networking.nameservers =
