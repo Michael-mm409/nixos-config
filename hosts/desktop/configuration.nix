@@ -34,6 +34,17 @@
     '';
   };
 
+  systemd.services.openrgb-shutdown = {
+    description = "Turn off RGB on shutdown";
+    before = [ "sleep.target" "shutdown.target" ];
+    wantedBy = [ "sleep.target" "shutdown.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      # This tells OpenRGB to apply the 'Dark' profile and then exit
+      ExecStart = "${pkgs.openrgb-with-all-plugins}/bin/openrgb --profile Dark.orp";
+    };
+  };
+
   # Ensure the i7-13700K has the latest patches for the 5070-Ti
   boot.kernelPackages = pkgs.linuxPackages;
 
