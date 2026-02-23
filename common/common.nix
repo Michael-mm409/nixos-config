@@ -122,7 +122,7 @@
   };
 
   # Limit the Boot Menu Entries
-  boot.loader.systemd-boot.configurationLimit = 1;
+  boot.loader.systemd-boot.configurationLimit = 5;
 
   # Adding SyncThing to my NixOS Machines
 /*
