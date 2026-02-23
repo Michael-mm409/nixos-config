@@ -17,11 +17,13 @@
   services.hardware.openrgb = {
     enable = true;
     motherboard="intel";
+    package = pkgs.openrgb-with-all-plugins;
   };
 
   # Add OpenRGB to my desktop-specific packages
   environment.systemPackages = with pkgs; [
-    openrgb
+    openrgb-with-all-plugins
+    psmisc  # This provides the 'fuser' and 'pstree' commands
     desktop-file-utils # This provides update-desktop-database
   ];
 
