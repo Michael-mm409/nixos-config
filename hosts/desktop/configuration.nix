@@ -33,15 +33,19 @@
       chown michael:users /home/michael/.config/OpenRGB/plugins
     '';
   };
-
-  systemd.services.openrgb-shutdown = {
-    description = "Turn off RGB on shutdown";
-    before = [ "sleep.target" "shutdown.target" ];
-    wantedBy = [ "sleep.target" "shutdown.target" ];
+  
+  # System-level RGB control for Boot and Shutdown
+  systemd.services.openrgb-automator = {
+    description = "Sync OpenRGB profiles on Boot and Shutdown";
+    after = [ "network.target" "multi-user.target" ];
+    wantedBy = [ "multi-user.target" "sleep.target" ];
     serviceConfig = {
       Type = "oneshot";
-      # This tells OpenRGB to apply the 'Dark' profile and then exit
-      ExecStart = "${pkgs.openrgb-with-all-plugins}/bin/openrgb --profile Dark.orp";
+      RemainAfterExit = true;
+      # Apply Bright on Startup
+      ExecStart = "${pkgs.openrgb-with-all-plugins}/bin/openrgb --profile Bright.orp";
+      # Apply Dark on Shutdown/Suspend
+      ExecStop = "${pkgs.openrgb-with-all-plugins}/bin/openrgb --profile Dark.orp";
     };
   };
 
