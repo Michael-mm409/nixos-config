@@ -168,17 +168,4 @@
   networking.nameservers =
   [ "1.1.1.1" "8.8.8.8" ];
   networking.enableIPv6 = false;
-
-  programs.bash.interactiveShellInit = ''
-    # This function checks for the CONDA_PREFIX that direnv exports
-    # and returns a colored (CSC5020) tag if it's active.
-    show_conda_env() {
-      if [ -n "$CONDA_PREFIX" ]; then
-        echo -e "\[\033[1;34m\]($(basename "$CONDA_PREFIX"))\[\033[0m\] "
-      fi
-    }
-
-    # Integrate the function into your prompt
-    export PS1='$(show_conda_env)\u@\h:\w\$ '
-  '';
 }
