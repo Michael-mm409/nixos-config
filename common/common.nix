@@ -82,7 +82,11 @@
     nmap
   ];
 
-  services.tailscale.enable = true;
+  services.tailscale = {
+    enable = true;
+    # This allows me to run tailscale commands without sudo
+    extraUpFlags = [ "--operator=$(whoami) " ];
+  };
 
   # Force GNOME to show all three window buttons
   programs.dconf.enable = true;
@@ -98,12 +102,12 @@
     ];
   };
 
-  /*
+  
   services.desktopManager.gnome.extraGSettingsOverrides = ''
     [org.gnome.desktop.wm.preferences]
     button-layout='appmenu:minimize,maximize,close'
   '';
-*/
+
   # --- AUTOMATION & COMPATIBILITY ---
   programs.nix-ld.enable = true; # Needed for Conda/VS Code binaries
   programs.direnv = {
@@ -140,7 +144,7 @@
   boot.loader.systemd-boot.configurationLimit = 5;
 
   # Adding SyncThing to my NixOS Machines
-/*
+
   services.syncthing = {
     enable = true;
     user = "michael";
@@ -150,21 +154,17 @@
     overrideFolders = true;     # Allows you to manage folders via Nix
     settings = {
       devices = {
-        "Mini-PC" = { id = "DEVICE-ID-OF-YOUR-MINI-PC"; };
-        "Synology-NAS" = { id = "DEVICE-ID-OF-YOUR-NAS"; };
+        "Mini-PC" = { id = "DPXSJKH-FOKSL3Q-JN6CNRK-FWSB2SU-3IVMXSC-ZVB6UYB-GI36JOV-QAGB2QF"; addresses = [ "default" "tcp://100.70.100.118" ]; };
+        "Synology-NAS" = { id = "YODIB4K-XHNL3CB-VVEHUJM-YDSBTHU-EZB4AVN-VO3XDCI-F7EQNW7-NCUQLAT"; addresses = [ "default" "tcp://100.90.5.80" ]; };
       };
       folders = {
         "University" = {        # Your Master of Data Science work
           path = "/home/michael/Documents/University";
           devices = [ "Mini-PC" "Synology-NAS" ];
         };
-        "Obsidian" = {          # Your linked knowledge base
-          path = "/home/michael/Documents/Obsidian";
-          devices = [ "Mini-PC" "Synology-NAS" ];
-        };
       };
     };
-  };*/
+  };
 
   networking.nameservers =
   [ "1.1.1.1" "8.8.8.8" ];
