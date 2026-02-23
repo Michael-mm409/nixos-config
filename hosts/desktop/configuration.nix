@@ -13,6 +13,17 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
+  # Enable OpenRGB service for hardware control
+  services.hardware.openrgb = {
+    enable = true;
+    motherboard="intel";
+  };
+
+  # Add OpenRGB to my desktop-specific packages
+  environment.systemPackages = with pkgs; [
+    openrgb
+  ];
+
   # Ensure the i7-13700K has the latest patches for the 5070-Ti
   boot.kernelPackages = pkgs.linuxPackages;
 
