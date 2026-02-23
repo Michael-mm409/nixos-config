@@ -30,4 +30,8 @@
   system.stateVersion = "25.11"; 
   nix.settings.max-jobs = 16;
   nix.settings.cores = 0;  # Use all available cores for building
+
+  security.sudo.extraConfig = ''
+    Defaults env_reset,timestamp_timeout=240
+  ''; 
 }
