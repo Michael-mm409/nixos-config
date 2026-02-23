@@ -1,19 +1,20 @@
 {
   # Ensure these three blocks match exactly in storage.nix
   fileSystems."/" = {
-    device = "/dev/disk/by-uuid/5aa2bd3d-ae1e-4b1e-b0bd-e42d6f57ceba"; # Physical nvme1n1p1
+    device = "/dev/disk/by-uuid/72728c17-a00b-4d9c-b31f-34927c34a367"; # Physical nvme1n1p1
     fsType = "btrfs";
     options = [ "subvol=@"];
   };
 
   fileSystems."/boot" = {
-    device = "/dev/disk/by-uuid/83D8-A151"; # Physical nvme1n1p2
+    device = "/dev/disk/by-uuid/CA38-BF18"; # Physical nvme1n1p2
     fsType = "vfat";
   };
-
+  
   fileSystems."/home" = {
-    device = "/dev/disk/by-uuid/a3886764-3f1a-41d4-8428-8852c13a71e8"; # Physical nvme1n1p3
+    # Add the semicolon after the UUID string below
+    device = "/dev/disk/by-uuid/5e542145-466e-41c5-8056-ec37fa87905c"; 
     fsType = "btrfs";
     options = [ "subvol=@home" ];
   };
-} # <--- THIS FINAL BRACE IS LIKELY WHAT IS MISSING
+ } # THIS FINAL BRACE IS LIKELY WHAT IS MISSING

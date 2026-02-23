@@ -79,6 +79,7 @@
     packages = [
       "com.ticktick.TickTick"     # Version 8.0.0
       "com.discordapp.Discord"   # No more update-loop breaks
+      "us.zoom.Zoom"
     ];
   };
 
