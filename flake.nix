@@ -28,6 +28,7 @@
           ./common/common.nix 
           ./hosts/desktop/nvidia.nix 
           ./hosts/desktop/hardware-configuration.nix
+          ./hosts/desktop/network-storage.nix
         ];
       };
     };
