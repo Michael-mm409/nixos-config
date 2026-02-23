@@ -35,20 +35,20 @@
   };
   
   # System-level RGB control for Boot and Shutdown
-  systemd.services.openrgb-automator = {
-    description = "Sync OpenRGB profiles on Boot and Shutdown";
-    after = [ "network.target" "multi-user.target" ];
+  systemd.services.openrgb-system-sync = {
+    description = "OpenRGB System-Wide Sync (Bright on Boot, Dark on Shutdown)";
+    after = [ "multi-user.target" ];
     wantedBy = [ "multi-user.target" "sleep.target" ];
     serviceConfig = {
       Type = "oneshot";
       RemainAfterExit = true;
-      # Apply Bright on Startup
-      ExecStart = "${pkgs.openrgb-with-all-plugins}/bin/openrgb --profile Bright.orp";
-      # Apply Dark on Shutdown/Suspend
-      ExecStop = "${pkgs.openrgb-with-all-plugins}/bin/openrgb --profile Dark.orp";
+      # Load the Bright profile as soon as the system reaches multi-user state
+      ExecStart = "${pkgs.openrgb-with-all-plugins}/bin/openrgb --profile /home/michael/.config/OpenRGB/Bright.orp";
+      # Load the Dark profile during shutdown, suspend, or restart
+      ExecStop = "${pkgs.openrgb-with-all-plugins}/bin/openrgb --profile /home/michael/.config/OpenRGB/Dark.orp";
     };
   };
-
+ 
   # Ensure the i7-13700K has the latest patches for the 5070-Ti
   boot.kernelPackages = pkgs.linuxPackages;
 
