@@ -168,4 +168,21 @@
   networking.nameservers =
   [ "1.1.1.1" "8.8.8.8" ];
   networking.enableIPv6 = false;
+
+  programs.bash.interactiveShellInit = ''
+    # Hook direnv into the shell
+    eval "$(direnv hook bash)"
+
+    # Improved function to show the environment
+    show_conda_env() {
+      if [ -n "$CONDA_PREFIX" ]; then
+        # Explicitly echo the name to ensure it's captured by PS1
+        echo -e "($(basename "$CONDA_PREFIX")) "
+      fi
+    }
+
+    # Use double quotes for the color codes and single quotes for the function call
+    # This prevents Nix from trying to interpret the backslashes
+    export PS1='\[\033[1;34m\]$(show_conda_env)\[\033[0m\]\u@\h:\w\$ '
+  '';
 }
