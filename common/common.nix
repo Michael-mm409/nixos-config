@@ -1,6 +1,22 @@
 { config, pkgs, ... }:
 
 {
+  # 1. Enable the dynamic linker for non-Nix binaries (Conda, VS Code, etc.)
+  programs.nix-ld.libraries = with pkgs; [
+    stdenv.cc.cc
+    zlib
+    fuse3
+    icu
+    nss
+    openssl
+    curl
+    expat
+    # Add any other libraries your ML models/Data Science tools might need
+  ];
+
+  # 2. Map standard paths like /bin/bash for scripts
+  services.envfs.enable = true;
+
   # Allow unfree software (Brave, VS Code, etc.)
   nixpkgs.config.allowUnfree = true;
 
@@ -62,6 +78,8 @@
     gnomeExtensions.appindicator
     gnome-tweaks
     tailscale
+    conda
+    nmap
   ];
 
   # This allows direnv to hook into your bash shell
