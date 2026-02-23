@@ -180,9 +180,19 @@
       fi
     }
 
+    
     # 3. Use the 'prompt' variable if PS1 is being overwritten
     # We use \[ \] to tell bash these are non-printing characters (prevents weird wrapping)
     # 1;34m is Bold Blue
-    PROMPT_COMMAND='PS1="\[\033[1;34m\]$(show_conda_env)\[\033[0m\]\u@\h:\w\$ "'
+
+    # 3.1 COLOR SCHEME
+    # \[ \033[1;34m \] -> Bold Blue (Conda Env)
+    # \[ \033[1;32m \] -> Bold Green (Username)
+    # \[ \033[1;33m \] -> Bold Yellow (@Host)
+    # \[ \033[1;36m \] -> Bold Cyan (Current Path)
+    # \[ \033[0m \]    -> Reset to white
+
+    PROMPT_COMMAND='PS1="\[\033[1;34m\]$(show_conda_env)\[\033[1;32m\]\u\[\033[1;33m\]@\h\[\033[00m\]:\[\033[1;36m\]\w\[\033[00m\]\$ "'
+
   '';
 }
