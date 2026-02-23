@@ -22,7 +22,15 @@
   # Add OpenRGB to my desktop-specific packages
   environment.systemPackages = with pkgs; [
     openrgb
+    desktop-file-utils # This provides update-desktop-database
   ];
+
+  system.activationScripts.openrgb-plugins = {
+    text = ''
+      mkdir -p /home/michael/.config/OpenRGB/plugins
+      chown michael:users /home/michael/.config/OpenRGB/plugins
+    '';
+  };
 
   # Ensure the i7-13700K has the latest patches for the 5070-Ti
   boot.kernelPackages = pkgs.linuxPackages;
