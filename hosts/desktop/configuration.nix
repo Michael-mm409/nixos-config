@@ -59,4 +59,25 @@
   security.sudo.extraConfig = ''
     Defaults env_reset,timestamp_timeout=240
   ''; 
+
+  programs.steam = {
+  enable = true;
+  gamescopeSession.enable = true; # Enables Gamescope for better gaming experience
+  remotePlay.openFirewall = true;
+  dedicatedServer.openFirewall = true;
+  localNetworkGameTransfers.openFirewall = true;
+  };   
+
+  hardware.graphics = {
+  enable = true;
+  enable32Bit = true;
+  };   
+
+  programs = {
+  gamescope = {
+    enable = true;
+    capSysNice = true;
+  };
+  
+};   
 }
