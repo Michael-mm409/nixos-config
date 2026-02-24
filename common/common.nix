@@ -153,16 +153,17 @@
     overrideFolders = true;
     
     settings = {
-      devices = {
-        "Mini-PC" = { 
-          id = "DPXSJKH-FOKSL3Q-JN6CNRK-FWSB2SU-3IVMXSC-ZVB6UYB-GI36JOV-QAGB2QF"; 
-          addresses = [ "default" "tcp://100.70.100.118" ]; 
+        devices = {
+          "Mini-PC" = { 
+            # Use the ID the desktop actually "got" in the error message
+            id = "Z6LOPPW-OWK2ZVY-W4DVQTF-7NR42TU-UXRGMJ4-RN2LZ3I-LWROXH2-TD3BPA4"; 
+            addresses = [ "default" "tcp://100.70.100.118" ]; 
+          };
+          "Synology-NAS" = { 
+            id = "YODIB4K-XHNL3CB-VVEHUJM-YDSBTHU-EZB4AVN-VO3XDCI-F7EQNW7-NCUQLAT"; 
+            addresses = [ "default" "tcp://100.90.5.80" ]; 
+          };
         };
-        "Synology-NAS" = { 
-          id = "YODIB4K-XHNL3CB-VVEHUJM-YDSBTHU-EZB4AVN-VO3XDCI-F7EQNW7-NCUQLAT"; 
-          addresses = [ "default" "tcp://100.90.5.80" ]; 
-        };
-      }; # End of devices
 
       folders = {
         "University" = {
