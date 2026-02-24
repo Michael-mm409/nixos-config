@@ -144,35 +144,36 @@
   boot.loader.systemd-boot.configurationLimit = 5;
 
   # Adding SyncThing to my NixOS Machines
-
   services.syncthing = {
     enable = true;
     user = "michael";
-    dataDir = "/home/michael/Documents";    # Default folder for synced data
+    dataDir = "/home/michael/Documents";
     configDir = "/home/michael/.config/syncthing";
-    overrideDevices = true;     # Allows you to manage devices via Nix
-    overrideFolders = true;     # Allows you to manage folders via Nix
+    overrideDevices = true;
+    overrideFolders = true;
+    
     settings = {
-       devices = {
+      devices = {
         "Mini-PC" = { 
           id = "DPXSJKH-FOKSL3Q-JN6CNRK-FWSB2SU-3IVMXSC-ZVB6UYB-GI36JOV-QAGB2QF"; 
-          # Use a space between "default" and the IP, ensure no trailing commas
           addresses = [ "default" "tcp://100.70.100.118" ]; 
         };
         "Synology-NAS" = { 
           id = "YODIB4K-XHNL3CB-VVEHUJM-YDSBTHU-EZB4AVN-VO3XDCI-F7EQNW7-NCUQLAT"; 
           addresses = [ "default" "tcp://100.90.5.80" ]; 
         };
-      }; 
-     };
+      }; # End of devices
+
       folders = {
-        "University" = {        # Your Master of Data Science work
+        "University" = {
+          # Use the folder ID from your Proxmox/Synology UI here if it's different
+          id = "University"; 
           path = "/home/michael/Documents/University";
           devices = [ "Mini-PC" "Synology-NAS" ];
         };
-      };
-   
-  };
+      }; # End of folders
+    }; # End of settings
+};
 
   networking.nameservers =
   [ "1.1.1.1" "8.8.8.8" ];
