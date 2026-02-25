@@ -60,7 +60,12 @@
       ExecStop = "${pkgs.openrgb-with-all-plugins}/bin/openrgb --profile /home/michael/.config/OpenRGB/Dark.orp";
     };
   };
- 
+  
+  # Set permanent metric for networking interfaces
+  networking.localCommands = ''
+    ${pkgs.iproute2}/bin/ip route add default via $( ${pkgs.iproute2}/bin/ip route show dev wlo1 | awk '{print $3}' | head -n 1 ) dev wlo1 metric 512 || true
+    ${pkgs.iproute2}/bin/ip route add default via $( ${pkgs.iproute2}/bin/ip route show dev enp5s0 | awk '{print $3}' | head -n 1 ) dev enp5s0 metric 2048 || true
+  '';
   # Ensure the i7-13700K has the latest patches for the 5070-Ti
   boot.kernelPackages = pkgs.linuxPackages;
 
