@@ -62,10 +62,18 @@
   };
   
   # Set permanent metric for networking interfaces
-  networking.localCommands = ''
-    ${pkgs.iproute2}/bin/ip route add default via $( ${pkgs.iproute2}/bin/ip route show dev wlo1 | awk '{print $3}' | head -n 1 ) dev wlo1 metric 512 || true
-    ${pkgs.iproute2}/bin/ip route add default via $( ${pkgs.iproute2}/bin/ip route show dev enp5s0 | awk '{print $3}' | head -n 1 ) dev enp5s0 metric 2048 || true
-  '';
+  # Prefer Wi-Fi 6E (Metric 50) over Ethernet (Metric 1000)
+   
+  # Set the priority at the NetworkManager level
+  # Lower number = Higher Priority
+  networking.networkmanager.connectionConfig."connection.route-metric" = 50; 
+
+  # Force the Ethernet interface (enp5s0) to a very high metric
+  systemd.network.networks."10-enp5s0" = {
+    matchConfig.Name = "enp5s0";
+    networkConfig.DHCP = "yes";
+    dhcpV4Config.RouteMetric = 1000;
+  };
   # Ensure the i7-13700K has the latest patches for the 5070-Ti
   boot.kernelPackages = pkgs.linuxPackages;
 
@@ -78,23 +86,20 @@
   ''; 
 
   programs.steam = {
-  enable = true;
-  gamescopeSession.enable = true; # Enables Gamescope for better gaming experience
-  remotePlay.openFirewall = true;
-  dedicatedServer.openFirewall = true;
-  localNetworkGameTransfers.openFirewall = true;
+    enable = true;
+    gamescopeSession.enable = true;
+    remotePlay.openFirewall = true;
+    dedicatedServer.openFirewall = true;
+    localNetworkGameTransfers.openFirewall = true;
   };   
 
   hardware.graphics = {
-  enable = true;
-  enable32Bit = true;
+    enable = true;
+    enable32Bit = true;
   };   
 
-  programs = {
-  gamescope = {
+  programs.gamescope = {
     enable = true;
     capSysNice = true;
-  };
-  
-};   
+  }; # This replaces the broken 'programs = {' block
 }
