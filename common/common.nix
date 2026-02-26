@@ -95,6 +95,7 @@
   
   environment.shellAliases = {
     nix-up = "$HOME/nixos-config/rebuild.sh";
+    nix-pull = "git -C $HOME/Documents/nixos-config pull";
     
     # Standardizing on uni-pull and uni-push for clarity
     # Note: All excludes are on one line to prevent the syntax error you saw
@@ -104,6 +105,32 @@
   };
   
   boot.loader.systemd-boot.configurationLimit = 5;
+  
+  # Sync the synology home folder
+  systemd.user.services.daily-nas-sync = {
+    description = "Daily Mirror Sync to Synology (Safe Delete)";
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = pkgs.writeScript "safe-sync" ''
+        #!${pkgs.bash}/bin/bash
+        mkdir -p /home/michael/Documents/Synology_Home
+        if [ $(ls -A /home/michael/Documents/University | wc -l) -gt 0 ]; then
+          ${pkgs.rsync}/bin/rsync -avzu --delete /home/michael/Documents/University/ michael@100.90.5.80:/volume1/homes/michael/University/
+        else
+          ${pkgs.rsync}/bin/rsync -avzu  /home/michael/Documents/Synology_Home michael@100.90.5.80:/volume1/homes/michael
+        fi
+      '';
+    };
+  };
+
+  systemd.user.timers.daily-nas-sync = {
+    wantedBy = [ "timers.target" ];
+    timerConfig = {
+      OnCalendar = "daily";
+      Persistent = true; # Runs at next boot if the laptop was off
+      Unit = "daily-nas-sync.service";
+    };
+  };
   
   # Standardizing the Service
   systemd.user.services.sync-university = {
