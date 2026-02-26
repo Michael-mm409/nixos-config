@@ -97,7 +97,7 @@
     nix-up = "$HOME/nixos-config/rebuild.sh";
     nix-pull = "git -C $HOME/Documents/nixos-config pull";
     
-    nas-pull = "mkdir -p $HOME/Synology_Home && ${pkgs.rsync}/bin/rsync -avzu -e ssh Michael@100.90.5.80:/home/michael/Documents/Synology_Home $HOME/Synology_Home";
+    nas-pull = "mkdir -p $HOME/Synology_Home && ${pkgs.rsync}/bin/rsync -avzu -e ssh Michael@100.90.5.80:/volume1/homes/michael $HOME/Synology_Home/";
     nas-push = "mkdir -p $HOME/Synology_Home && ${pkgs.rsync}/bin/rsync -avzu -e ssh $HOME/Synology_Home Michael@100.90.5.80:/volume1/homes/michael";
     
     # Standardizing on uni-pull and uni-push for clarity
