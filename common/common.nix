@@ -95,40 +95,34 @@
   
   environment.shellAliases = {
     nix-up = "$HOME/nixos-config/rebuild.sh";
-    # Force an upload to the hub - No --delete used here for safety
-    uni-push = "${pkgs.rsync}/bin/rsync -avzu -e ssh $HOME/Documents/University/ michael@pve:/home/michael/University/";
+    # SAFE PULL: Get files from Hub to Local (Update only, no delete)
+    uni-pull = "${pkgs.rsync}/bin/rsync -avzu -e ssh michael@100.70.100.118:/home/michael/University/ $HOME/Documents/University/";
+    
+    # SAFE PUSH: Send local changes to Hub (Update only, no delete)
+    uni-push = "${pkgs.rsync}/bin/rsync -avzu -e ssh $HOME/Documents/University/ michael@100.70.100.118:/home/michael/University/";
   };
-
+  
   boot.loader.systemd-boot.configurationLimit = 5;
   
-  # Systemd service for automatic University sync over Tailscale
-  # Systemd service for automatic University sync over Tailscale
+  # Standardizing the Service
   systemd.user.services.sync-university = {
     description = "Hourly Sync of University folders from Mini-PC Hub";
     wantedBy = [ "graphical-session.target" ];
+    path = with pkgs; [ rsync openssh bash coreutils ];
     serviceConfig = {
       Type = "oneshot";
       ExecStart = pkgs.writeScript "sync-university-script" ''
         #!${pkgs.bash}/bin/bash
         DEST="$HOME/Documents/University"
-        mkdir -p "$DEST"
-
-        # SAFETY CHECK: Connect via SSH and check if the core UOW folder is NOT empty
-        # This prevents syncing an 'empty' state if the hub was wiped.
-        if ! ssh michael@pve "[ -d /home/michael/University/UOW ] && [ \"\$(ls -A /home/michael/University/UOW)\" ]"; then
-            echo "CRITICAL: Remote hub appears empty or unreachable. Aborting sync to protect local data."
-            exit 1
+        # SAFETY: Only run if the local folder isn't broken and hub is up
+        if ssh -o ConnectTimeout=5 michael@100.70.100.118 "[ -d /home/michael/University/UOW ]"; then
+            ${pkgs.rsync}/bin/rsync -avzu -e ssh \
+              --exclude='*.sh' --exclude='*.txt' --exclude='cmake-build-*/' \
+              michael@100.70.100.118:/home/michael/University/ "$DEST/"
         fi
-
-        # Sync using -u (Update) instead of --delete
-        # This only adds new/changed files and never removes local ones.
-        ${pkgs.rsync}/bin/rsync -avzu -e ssh \
-          --exclude='*.sh' --exclude='*.txt' \
-          michael@pve:/home/michael/University/ "$DEST/"
       '';
     };
   };
-
   # Timer to run the sync every 1 hour
   systemd.user.timers.sync-university-timer = {
     description = "Run University sync every hour";
