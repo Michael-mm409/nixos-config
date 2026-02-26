@@ -99,7 +99,12 @@
     uni-pull = "${pkgs.rsync}/bin/rsync -avzu -e ssh michael@100.70.100.118:/home/michael/University/ $HOME/Documents/University/";
     
     # SAFE PUSH: Send local changes to Hub (Update only, no delete)
-    uni-push = "${pkgs.rsync}/bin/rsync -avzu -e ssh $HOME/Documents/University/ michael@100.70.100.118:/home/michael/University/";
+    uni-push = "${pkgs.rsync}/bin/rsync -avzu -e ssh \
+      --exclude='.conda/' \
+      --exclude='.ipynb_checkpoints/' \
+      --exclude='__MACOSX/' \
+      --exclude='cmake-build-*/' \
+      $HOME/Documents/University/ michael@100.70.100.118:/home/michael/University/";
   };
   
   boot.loader.systemd-boot.configurationLimit = 5;
