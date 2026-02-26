@@ -110,11 +110,11 @@
       devices = {
         "Mini-PC" = { 
           id = "Z6LOPPW-OWK2ZVY-W4DVQTF-7NR42TU-UXRGMJ4-RN2LZ3I-LWROXH2-TD3BPA4"; 
-          addresses = [ "default" "tcp://100.70.100.118" ]; 
+          addresses = [ "tcp://100.70.100.118" ]; 
         };
         "Synology-NAS" = { 
           id = "YODIB4K-XHNL3CB-VVEHUJM-YDSBTHU-EZB4AVN-VO3XDCI-F7EQNW7-NCUQLAT"; 
-          addresses = [ "default" "tcp://100.90.5.80" ]; 
+          addresses = [ "tcp://100.90.5.80" ]; 
         };
       };
       folders = {
