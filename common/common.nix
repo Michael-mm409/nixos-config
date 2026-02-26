@@ -52,7 +52,7 @@
     gnomeExtensions.dash-to-panel
     gnomeExtensions.arc-menu
     gnomeExtensions.appindicator
-    tailscale
+    tailscale rclone
   ];
 
   services.tailscale.enable = true;
@@ -123,6 +123,37 @@
           ${pkgs.rsync}/bin/rsync -avzu  /home/michael/Documents/Synology_Home michael@100.90.5.80:/volume1/homes/michael
         fi
       '';
+    };
+  };
+  
+  # Systemd service for daily iterative backup
+  systemd.user.services.daily-uni-backup = {
+    description = "Daily Iterative University Backup to Synology";
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = let
+        date = "$(date +%Y-%m-%d_%H-%M)";
+      in pkgs.writeScript "uni-backup-script" ''
+        #!${pkgs.bash}/bin/bash
+        # 1. Run the iterative backup
+        ${pkgs.rclone}/bin/rclone copy /home/michael/Documents/University/ nas-home:University/ \
+          --backup-dir nas-home:University_Archive/${date} \
+          --exclude '.conda/**' --exclude '.ipynb_checkpoints/**' --exclude 'cmake-build-/**' \
+          --progress
+
+        # 2. Rotate archives: Keep only the 5 most recent folders
+        ${pkgs.rclone}/bin/rclone lsf nas-home:University_Archive/ | sort -r | tail -n +6 | xargs -I{} ${pkgs.rclone}/bin/rclone purge nas-home:University_Archive/{}
+      '';
+    };
+  };
+
+  # The Timer to trigger the service
+  systemd.user.timers.daily-uni-backup = {
+    wantedBy = [ "timers.target" ];
+    timerConfig = {
+      OnCalendar = "daily";
+      Persistent = true; # Ensures it runs at next boot if the laptop was off
+      Unit = "daily-uni-backup.service";
     };
   };
 
