@@ -124,6 +124,18 @@
           devices = [ "Mini-PC" "Synology-NAS" ];
         };
       };
+
+      gui = {
+        address = "127.0.0.1:8384"; # Local access only for security
+      };
+
+      options = {
+        listenAddresses = [ "default" "tcp://0.0.0.0:22000" "quic://0.0.0.0:22000" ];
+        localAnnounceEnabled = true;
+        globalAnnounceEnabled = true;
+        relaysEnabled = true;
+        urAccepted = -1; # Disables usage reporting
+      };
     };
   };
 
