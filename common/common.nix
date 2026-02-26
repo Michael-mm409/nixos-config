@@ -92,30 +92,37 @@
   };
  
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  
   environment.shellAliases = {
     nix-up = "$HOME/nixos-config/rebuild.sh";
-    # New alias to push local changes back to the hub
-    uni-push = "${pkgs.rsync}/bin/rsync -avz -e ssh --delete $HOME/Documents/University/ michael@100.70.100.118:/home/michael/University/";
+    # Force an upload to the hub - No --delete used here for safety
+    uni-push = "${pkgs.rsync}/bin/rsync -avzu -e ssh $HOME/Documents/University/ michael@pve:/home/michael/University/";
   };
 
   boot.loader.systemd-boot.configurationLimit = 5;
   
+  # Systemd service for automatic University sync over Tailscale
   # Systemd service for automatic University sync over Tailscale
   systemd.user.services.sync-university = {
     description = "Hourly Sync of University folders from Mini-PC Hub";
     wantedBy = [ "graphical-session.target" ];
     serviceConfig = {
       Type = "oneshot";
-      # Pulling FROM Mini-PC TO Local
       ExecStart = pkgs.writeScript "sync-university-script" ''
         #!${pkgs.bash}/bin/bash
-        # Target local directory
         DEST="$HOME/Documents/University"
         mkdir -p "$DEST"
 
-        # Sync core course folders (UOW and USQ)
-        # Using the hostname 'pve' works because Tailscale handles the DNS
-        ${pkgs.rsync}/bin/rsync -avz -e ssh --delete \
+        # SAFETY CHECK: Connect via SSH and check if the core UOW folder is NOT empty
+        # This prevents syncing an 'empty' state if the hub was wiped.
+        if ! ssh michael@pve "[ -d /home/michael/University/UOW ] && [ \"\$(ls -A /home/michael/University/UOW)\" ]"; then
+            echo "CRITICAL: Remote hub appears empty or unreachable. Aborting sync to protect local data."
+            exit 1
+        fi
+
+        # Sync using -u (Update) instead of --delete
+        # This only adds new/changed files and never removes local ones.
+        ${pkgs.rsync}/bin/rsync -avzu -e ssh \
           --exclude='*.sh' --exclude='*.txt' \
           michael@pve:/home/michael/University/ "$DEST/"
       '';
