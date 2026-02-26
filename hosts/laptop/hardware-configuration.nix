@@ -23,9 +23,15 @@
       fsType = "vfat";
       options = [ "fmask=0077" "dmask=0077" ];
     };
+    fileSystems."/home" = {
+    device = "/dev/disk/by-uuid/22985a39-abf7-4ed3-806b-f1e0dda4923d";
+    fsType = "btrfs";
+    options = [ "subvol=@home" "compress=zstd" ];
+  };
 
   swapDevices = [ ];
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+
 }
