@@ -95,16 +95,12 @@
   
   environment.shellAliases = {
     nix-up = "$HOME/nixos-config/rebuild.sh";
-    # SAFE PULL: Get files from Hub to Local (Update only, no delete)
-    uni-pull = "${pkgs.rsync}/bin/rsync -avzu -e ssh michael@100.70.100.118:/home/michael/University/ $HOME/Documents/University/";
     
-    # SAFE PUSH: Send local changes to Hub (Update only, no delete)
-    uni-push = "${pkgs.rsync}/bin/rsync -avzu -e ssh \
-      --exclude='.conda/' \
-      --exclude='.ipynb_checkpoints/' \
-      --exclude='__MACOSX/' \
-      --exclude='cmake-build-*/' \
-      $HOME/Documents/University/ michael@100.70.100.118:/home/michael/University/";
+    # Standardizing on uni-pull and uni-push for clarity
+    # Note: All excludes are on one line to prevent the syntax error you saw
+    uni-pull = "${pkgs.rsync}/bin/rsync -avzu -e ssh --exclude='.conda/' --exclude='.ipynb_checkpoints/' --exclude='__MACOSX/' --exclude='cmake-build-*/' michael@100.70.100.118:/home/michael/University/ $HOME/Documents/University/";
+    
+    uni-push = "${pkgs.rsync}/bin/rsync -avzu -e ssh --exclude='.conda/' --exclude='.ipynb_checkpoints/' --exclude='__MACOSX/' --exclude='cmake-build-*/' $HOME/Documents/University/ michael@100.70.100.118:/home/michael/University/";    
   };
   
   boot.loader.systemd-boot.configurationLimit = 5;
