@@ -16,7 +16,7 @@
           ./hosts/laptop/configuration.nix 
           ./common/common.nix
           ./hosts/laptop/battery.nix 
-          ./hosts/laptop/storage.nix 
+          ./hosts/laptop/hardware-configuration.nix 
         ];
       };
 

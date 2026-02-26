@@ -12,11 +12,16 @@ echo "Building NixOS for $host..."
 
 # THE FIX: Target the specific host and use 'boot' if storage/hardware changed
 # This avoids the 'home.mount' busy error on the desktop
-if git diff --cached --name-only | grep -E "storage.nix|hardware-configuration.nix"; then
-    echo "⚠️  Storage changes detected. Using 'boot' mode..."
-    sudo nixos-rebuild boot --flake .#$host
+if [ "$host" = "nixos-laptop" ]; then
+	echo "Laptop detected. Using 'boot' to prevent session logout..."
+	sudo nixos-rebuild boot --flake .#$host
 else
-    sudo nixos-rebuild switch --flake .#$host
+	if git diff --cached --name-only | grep -E "storage.nix|hardware-configuration.nix"; then
+    		echo "⚠️  Storage changes detected. Using 'boot' mode..."
+    		sudo nixos-rebuild boot --flake .#$host
+	else
+		sudo nixos-rebuild switch --flake .#$host
+	fi
 fi
 
 # 3. Wait a moment for the system to register the new generation
