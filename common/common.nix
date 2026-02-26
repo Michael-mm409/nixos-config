@@ -94,50 +94,44 @@
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   environment.shellAliases = {
     nix-up = "$HOME/nixos-config/rebuild.sh";
+    # New alias to push local changes back to the hub
+    uni-push = "${pkgs.rsync}/bin/rsync -avz -e ssh --delete $HOME/Documents/University/ michael@100.70.100.118:/home/michael/University/";
   };
 
   boot.loader.systemd-boot.configurationLimit = 5;
+  
+  # Systemd service for automatic University sync over Tailscale
+  systemd.user.services.sync-university = {
+    description = "Hourly Sync of University folders from Mini-PC Hub";
+    wantedBy = [ "graphical-session.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      # Pulling FROM Mini-PC TO Local (Laptop/Desktop)
+      ExecStart = pkgs.writeScript "sync-university-script" ''
+        #!${pkgs.bash}/bin/bash
+        # Target local directory
+        DEST="$HOME/Documents/University"
+        mkdir -p "$DEST"
 
-  # Adding SyncThing - FIXED NESTING
-  services.syncthing = {
-    enable = true;
-    user = "michael";
-    dataDir = "/home/michael/Documents";
-    configDir = "/home/michael/.config/syncthing";
-    overrideDevices = true;
-    overrideFolders = true;
-    settings = {
-      devices = {
-        "Mini-PC" = { 
-          id = "Z6LOPPW-OWK2ZVY-W4DVQTF-7NR42TU-UXRGMJ4-RN2LZ3I-LWROXH2-TD3BPA4"; 
-          addresses = [ "tcp://100.70.100.118" ]; 
-        };
-        "Synology-NAS" = { 
-          id = "YODIB4K-XHNL3CB-VVEHUJM-YDSBTHU-EZB4AVN-VO3XDCI-F7EQNW7-NCUQLAT"; 
-          addresses = [ "tcp://100.90.5.80" ]; 
-        };
-      };
-      folders = {
-        "University" = {
-          id = "University"; 
-          path = "/home/michael/Documents/University";
-          devices = [ "Mini-PC" "Synology-NAS" ];
-        };
-      };
-
-      gui = {
-        address = "127.0.0.1:8384"; # Local access only for security
-      };
-
-      options = {
-        listenAddresses = [ "default" "tcp://0.0.0.0:22000" "quic://0.0.0.0:22000" ];
-        localAnnounceEnabled = true;
-        globalAnnounceEnabled = true;
-        relaysEnabled = true;
-        urAccepted = -1; # Disables usage reporting
-      };
+        # Sync the core course folders (UOW and USQ)
+        # We exclude the scripts and logs to keep the local folder clean
+        ${pkgs.rsync}/bin/rsync -avz -e ssh --delete \
+          --exclude='*.sh' --exclude='*.txt' \
+          michael@100.70.100.118:/home/michael/University/ "$DEST/"
+      '';
     };
   };
+
+  # Timer to run the sync every 1 hour
+  systemd.user.timers.sync-university-timer = {
+    description = "Run University sync every hour";
+    wantedBy = [ "timers.target" ];
+    timerConfig = {
+      OnBootSec = "10m";      # Wait for Tailscale to handshake
+      OnUnitActiveSec = "1h"; # Repeat every hour
+      Unit = "sync-university.service";
+    };
+  };  
 
   networking.nameservers = [ "1.1.1.1" "8.8.8.8" ];
   networking.enableIPv6 = false;
