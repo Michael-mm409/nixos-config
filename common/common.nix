@@ -106,18 +106,18 @@
     wantedBy = [ "graphical-session.target" ];
     serviceConfig = {
       Type = "oneshot";
-      # Pulling FROM Mini-PC TO Local (Laptop/Desktop)
+      # Pulling FROM Mini-PC TO Local
       ExecStart = pkgs.writeScript "sync-university-script" ''
         #!${pkgs.bash}/bin/bash
         # Target local directory
         DEST="$HOME/Documents/University"
         mkdir -p "$DEST"
 
-        # Sync the core course folders (UOW and USQ)
-        # We exclude the scripts and logs to keep the local folder clean
+        # Sync core course folders (UOW and USQ)
+        # Using the hostname 'pve' works because Tailscale handles the DNS
         ${pkgs.rsync}/bin/rsync -avz -e ssh --delete \
           --exclude='*.sh' --exclude='*.txt' \
-          michael@100.70.100.118:/home/michael/University/ "$DEST/"
+          michael@pve:/home/michael/University/ "$DEST/"
       '';
     };
   };
@@ -127,8 +127,8 @@
     description = "Run University sync every hour";
     wantedBy = [ "timers.target" ];
     timerConfig = {
-      OnBootSec = "10m";      # Wait for Tailscale to handshake
-      OnUnitActiveSec = "1h"; # Repeat every hour
+      OnBootSec = "5m";
+      OnUnitActiveSec = "1h";
       Unit = "sync-university.service";
     };
   };  
