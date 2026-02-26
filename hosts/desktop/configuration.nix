@@ -102,4 +102,10 @@
     enable = true;
     capSysNice = true;
   }; # This replaces the broken 'programs = {' block
+
+  # Create a 16GB swap file on the root partition
+  swapDevices = [ {
+    device = "/var/lib/swapfile";
+    size = 32 * 1024;
+  } ];
 }
