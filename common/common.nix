@@ -96,9 +96,10 @@
   environment.shellAliases = {
     nix-up = "$HOME/nixos-config/rebuild.sh";
     nix-pull = "git -C $HOME/Documents/nixos-config pull";
-    
-    nas-pull = "mkdir -p $HOME/Synology_Home && ${pkgs.rsync}/bin/rsync -avzu -e ssh Michael@100.90.5.80:/volume1/homes/michael/ $HOME/Synology_Home/";
-    nas-push = "mkdir -p $HOME/Synology_Home && ${pkgs.rsync}/bin/rsync -avzu -e ssh $HOME/Synology_Home Michael@100.90.5.80:/volume1/homes/michael/";
+   
+    # Local: michael | Remote: Michael
+    nas-pull = "mkdir -p $HOME/Synology_Home && ${pkgs.rsync}/bin/rsync -avzu -e ssh Michael@100.90.5.80:/volume1/homes/Michael/ $HOME/Synology_Home/";
+    nas-push = "mkdir -p $HOME/Synology_Home && ${pkgs.rsync}/bin/rsync -avzu -e ssh $HOME/Synology_Home Michael@100.90.5.80:/volume1/homes/Michael/";
     
     # Standardizing on uni-pull and uni-push for clarity
     # Note: All excludes are on one line to prevent the syntax error you saw
