@@ -197,6 +197,18 @@
     };
   };  
 
+  # SSH Client Configuration
+  programs.ssh = {
+    startAgent = true; # Ensures ssh-agent is running for your keys
+    extraConfig = ''
+      Host 100.90.5.80
+          HostName 100.90.5.80
+          User Michael
+          # This silences the specific post-quantum warning for your NAS
+          WarnWeakCrypto no
+    '';
+  };
+
   networking.nameservers = [ "1.1.1.1" "8.8.8.8" ];
   networking.enableIPv6 = false;
 
