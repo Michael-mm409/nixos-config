@@ -90,25 +90,32 @@
       ExecStart = "${pkgs.coreutils}/bin/rm -f %h/.config/BraveSoftware/Brave-Browser/SingletonLock";
     };
   };
+
+  boot.loader.systemd-boot.configurationLimit = 10; # Limits the boot menu to 10 entries
+
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 14d"; # Deletes anything older than 2 weeks
+  };
+
+  # Also optimizes the store to save space by linking identical files
+  nix.settings.auto-optimise-store = true;
  
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   
   environment.shellAliases = {
     nix-up = "$HOME/nixos-config/rebuild.sh";
     nix-pull = "git -C $HOME/Documents/nixos-config pull";
-   
-    # Local: michael | Remote: Michael
-    nas-pull = "mkdir -p $HOME/Synology_Home && ${pkgs.rsync}/bin/rsync -avzu -e ssh --exclude='@eaDir/' --exclude='@SynoEAStream' --exclude='cmake-build-*/' --exclude='.idea/' --exclude='.vscode*/' --exclude='.cache/' --exclude='.npm/' --exclude='.conda/' --exclude='.docker/' Michael@100.90.5.80:/volume1/homes/Michael/ $HOME/Synology_Home/";
-    nas-push = "mkdir -p $HOME/Synology_Home && ${pkgs.rsync}/bin/rsync -avzu -e ssh [EXCLUDES] $HOME/Synology_Home/ Michael@100.90.5.80:/volume1/homes/Michael/";
     
-    # Standardizing on uni-pull and uni-push for clarity
-    # Note: All excludes are on one line to prevent the syntax error you saw
+    # Standardized NAS syncs (Capital M for Remote, slash / for no-nesting)
+    nas-pull = "mkdir -p $HOME/Synology_Home && ${pkgs.rsync}/bin/rsync -avzu -e ssh --exclude='@eaDir/' --exclude='@SynoEAStream' --exclude='cmake-build-*/' --exclude='.idea/' --exclude='.vscode*/' --exclude='.cache/' --exclude='.npm/' --exclude='.conda/' --exclude='.docker/' --exclude='.dotnet/' --exclude='#recycle/' Michael@100.90.5.80:/volume1/homes/Michael/ $HOME/Synology_Home/";
+    
+    nas-push = "mkdir -p $HOME/Synology_Home && ${pkgs.rsync}/bin/rsync -avzu -e ssh --exclude='@eaDir/' --exclude='@SynoEAStream' --exclude='cmake-build-*/' --exclude='.idea/' --exclude='.vscode*/' --exclude='.cache/' --exclude='.npm/' --exclude='.conda/' --exclude='.docker/' --exclude='.dotnet/' --exclude='#recycle/' $HOME/Synology_Home/ Michael@100.90.5.80:/volume1/homes/Michael/";
+
     uni-pull = "${pkgs.rsync}/bin/rsync -avzu -e ssh --exclude='.conda/' --exclude='.ipynb_checkpoints/' --exclude='__MACOSX/' --exclude='cmake-build-*/' michael@100.70.100.118:/home/michael/University/ $HOME/Documents/University/";
-    
     uni-push = "${pkgs.rsync}/bin/rsync -avzu -e ssh --exclude='.conda/' --exclude='.ipynb_checkpoints/' --exclude='__MACOSX/' --exclude='cmake-build-*/' $HOME/Documents/University/ michael@100.70.100.118:/home/michael/University/";    
   };
-  
-  boot.loader.systemd-boot.configurationLimit = 5;
   
   # Sync the synology home folder
   systemd.user.services.daily-nas-sync = {
@@ -119,9 +126,9 @@
         #!${pkgs.bash}/bin/bash
         mkdir -p /home/michael/Documents/Synology_Home
         if [ $(ls -A /home/michael/Documents/University | wc -l) -gt 0 ]; then
-          ${pkgs.rsync}/bin/rsync -avzu --delete /home/michael/Documents/University/ michael@100.90.5.80:/volume1/homes/michael/University/
+          ${pkgs.rsync}/bin/rsync -avzu --delete /home/michael/Documents/University/ Michael@100.90.5.80:/volume1/homes/Michael/University/
         else
-          ${pkgs.rsync}/bin/rsync -avzu  /home/michael/Documents/Synology_Home michael@100.90.5.80:/volume1/homes/michael
+          ${pkgs.rsync}/bin/rsync -avzu /home/michael/Documents/Synology_Home Michael@100.90.5.80:/volume1/homes/Michael
         fi
       '';
     };
