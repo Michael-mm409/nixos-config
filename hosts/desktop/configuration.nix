@@ -14,7 +14,6 @@
 
   boot.loader.systemd-boot = {
   	enable = true;
-        configurationLimit = 5; # Keeps only the 5 most recent NixOS generations
   	# This stops systemd-boot from creating its own 'auto-windows' entry
   	# so only your '00-windows' manual entry shows up.
   	extraEntries = {
