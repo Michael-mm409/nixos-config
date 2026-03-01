@@ -48,12 +48,12 @@
   # --- SYSTEM PACKAGES ---
   environment.systemPackages = with pkgs; [
     vim wget brave vscode obsidian git direnv
-    vesktop nix-direnv conda nmap gnome-tweaks
+    vesktop nix-direnv conda nmap gnome-tweaks # Changed conda to anaconda
     gnomeExtensions.dash-to-panel
     gnomeExtensions.arc-menu
     gnomeExtensions.appindicator
     tailscale rclone
-  ];
+  ];  
 
   services.tailscale.enable = true;
 
@@ -219,12 +219,14 @@
   networking.enableIPv6 = false;
   
   programs.bash.interactiveShellInit = ''
-    # 1. Safely check if conda is in the system path
-    if [ -x /run/current-system/sw/bin/conda ]; then
-      eval "$(/run/current-system/sw/bin/conda shell.bash hook)"
+    # 1. Automatic Conda FHS environment entry
+    # This checks if we are already inside the conda-shell to avoid loops
+    if [[ -z "$CONDA_SHELL_FHS" && -x /run/current-system/sw/bin/conda-shell ]]; then
+      export CONDA_SHELL_FHS=1
+      exec /run/current-system/sw/bin/conda-shell
     fi
 
-    # 2. Existing hooks
+    # 2. Existing hooks (These will run once inside the conda-shell)
     eval "$(direnv hook bash)"
 
     show_conda_env() {
@@ -234,5 +236,5 @@
     }
 
     PROMPT_COMMAND='PS1="\[\033[1;34m\]$(show_conda_env)\[\033[1;32m\]\u\[\033[1;33m\]@\h\[\033[00m\]:\[\033[1;36m\]\w\[\033[00m\]\$ "'
-  '';
+  ''; 
 }
