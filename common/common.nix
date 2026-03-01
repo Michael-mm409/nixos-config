@@ -199,7 +199,6 @@
 
   # SSH Client Configuration
   programs.ssh = {
-    startAgent = true; # Ensures ssh-agent is running for your keys
     extraConfig = ''
       Host 100.90.5.80
           HostName 100.90.5.80
