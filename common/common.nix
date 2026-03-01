@@ -217,14 +217,16 @@
 
   networking.nameservers = [ "1.1.1.1" "8.8.8.8" ];
   networking.enableIPv6 = false;
+  
   programs.bash.interactiveShellInit = ''
-    # 1. Initialize Conda (This makes the 'conda' command work)
-    eval "$(${pkgs.conda}/bin/conda shell.bash hook)"
+    # 1. Safely check if conda is in the system path
+    if [ -x /run/current-system/sw/bin/conda ]; then
+      eval "$(/run/current-system/sw/bin/conda shell.bash hook)"
+    fi
 
-    # 2. Initialize Direnv
+    # 2. Existing hooks
     eval "$(direnv hook bash)"
 
-    # 3. Custom Prompt Logic
     show_conda_env() {
       if [ -n "$CONDA_PREFIX" ]; then
         echo "($(basename "$CONDA_PREFIX")) "
