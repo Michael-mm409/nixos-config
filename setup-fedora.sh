@@ -7,6 +7,7 @@ echo "🚀 Starting Michael's Fedora Setup on $HOSTNAME..."
 # 1. Update Fedora and install system essentials
 sudo dnf update -y
 sudo dnf install -y curl git wget util-linux-user dnf-plugins-core
+sudo dnf install -y gnome-extensions-app gnome-extension-manager
 
 # 2. Hardware Specific Installs (Nvidia/OpenRGB for Desktop, Powertop for Laptop)
 if [[ "$HOSTNAME" == "nixos-desktop" || "$HOSTNAME" == "michael-desktop" ]]; then
@@ -43,4 +44,18 @@ fi
 echo "🏠 Applying Home Manager for $HOSTNAME..."
 nix run home-manager/master -- init --switch ~/nixos-config#$HOSTNAME
 
+# 7. Zorin-style Aesthetics & UI Tweaks
+echo "🎨 Applying Michael's UI Preferences..."
+# Move window controls to the right (standard) or left (Zorin-style often uses right)
+gsettings set org.gnome.desktop.wm.preferences button-layout ":minimize,maximize,close"
+
+# Enable Dark Mode by default
+gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+
+# Improve font rendering for your laptop screen
+gsettings set org.gnome.desktop.interface font-antialiasing 'rgba'
+gsettings set org.gnome.desktop.interface font-hinting 'full'
+
+# Set Taskbar Clock to show date (Zorin style)
+gsettings set org.gnome.desktop.interface clock-show-date true
 echo "🎉 Setup Complete! Please RESTART your terminal."
