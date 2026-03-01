@@ -22,23 +22,23 @@
     '';
   };
 
-  # Shared User Packages (Apps you want everywhere)
+  # Shared User Packages (Removed tailscale as it's now handled by the Fedora script)
   home.packages = with pkgs; [
-    brave obsidian vscode git wget direnv rclone tailscale vesktop
+    brave obsidian vscode git wget direnv rclone vesktop
   ];
 
-  # User-level background syncs (Moved from common.nix)
-  systemd.user.services.daily-nas-sync = {
-    Unit.Description = "Daily Mirror Sync to Synology";
-    Service.ExecStart = "${pkgs.rsync}/bin/rsync -avzu /home/michael/Documents/University/ Michael@100.90.5.80:/volume1/homes/Michael/University/";
-  };
-  
+  # User-level background syncs (Unified and corrected)
   systemd.user.services.daily-nas-sync = {
     Unit.Description = "Daily Mirror Sync to Synology";
     Service = {
-      Type = "oneshot"; # Explicitly define as a single-run task
+      Type = "oneshot"; 
       ExecStart = "${pkgs.rsync}/bin/rsync -avzu /home/michael/Documents/University/ Michael@100.90.5.80:/volume1/homes/Michael/University/";
     };
+  };
+  
+  systemd.user.timers.daily-nas-sync = {
+    Install.WantedBy = [ "timers.target" ];
+    Timer = { OnCalendar = "daily"; Persistent = true; };
   };
 
   programs.home-manager.enable = true;
