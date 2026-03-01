@@ -1,36 +1,30 @@
 {
-  description = "Michael's Multi-PC Config";
-
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
-    # Add this input
-    nix-flatpak.url = "github:gmodena/nix-flatpak";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, nix-flatpak, ... }@inputs: {
-    nixosConfigurations = {
-      nixos-laptop = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        modules = [ 
-          nix-flatpak.nixosModules.nix-flatpak # Add this
-          ./hosts/laptop/configuration.nix 
-          ./common/common.nix
-          ./hosts/laptop/battery.nix 
-          ./hosts/laptop/hardware-configuration.nix 
-        ];
-      };
+  outputs = { nixpkgs, home-manager, ... }: {
+    # NixOS Desktop (System + Home Manager)
+    nixosConfigurations.nixos-desktop = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      modules = [
+        ./hosts/desktop/configuration.nix
+        home-manager.nixosModules.home-manager {
+          home-manager.useGlobalPkgs = true;
+          home-manager.useUserPackages = true;
+          home-manager.users.michael = import ./home.nix;
+        }
+      ];
+    };
 
-      nixos-desktop = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        modules = [ 
-          nix-flatpak.nixosModules.nix-flatpak # Add this
-          ./hosts/desktop/configuration.nix 
-          ./common/common.nix 
-          ./hosts/desktop/nvidia.nix 
-          ./hosts/desktop/hardware-configuration.nix
-          ./hosts/desktop/network-storage.nix
-        ];
-      };
+    # Fedora Laptop (Home Manager Standalone)
+    homeConfigurations."michael-laptop" = home-manager.lib.homeManagerConfiguration {
+      pkgs = nixpkgs.legacyPackages.x86_64-linux;
+      modules = [ ./home.nix ./hosts/laptop/home.nix ];
     };
   };
 }
