@@ -98,8 +98,8 @@
     nix-pull = "git -C $HOME/Documents/nixos-config pull";
    
     # Local: michael | Remote: Michael
-    nas-pull = "mkdir -p $HOME/Synology_Home && ${pkgs.rsync}/bin/rsync -avzu -e ssh --exclude='@eaDir/' --exclude='@SynoEAStream' --exclude='cmake-build-*/' --exclude='.idea/' --exclude='.vscode/' Michael@100.90.5.80:/volume1/homes/Michael/ $HOME/Synology_Home/";
-    nas-push = "mkdir -p $HOME/Synology_Home && ${pkgs.rsync}/bin/rsync -avzu -e ssh $HOME/Synology_Home Michael@100.90.5.80:/volume1/homes/Michael/";
+    nas-pull = "mkdir -p $HOME/Synology_Home && ${pkgs.rsync}/bin/rsync -avzu -e ssh --exclude='@eaDir/' --exclude='@SynoEAStream' --exclude='cmake-build-*/' --exclude='.idea/' --exclude='.vscode*/' --exclude='.cache/' --exclude='.npm/' --exclude='.conda/' --exclude='.docker/' Michael@100.90.5.80:/volume1/homes/Michael/ $HOME/Synology_Home/";
+    nas-push = "mkdir -p $HOME/Synology_Home && ${pkgs.rsync}/bin/rsync -avzu -e ssh --exclude='@eaDir/' --exclude='@SynoEAStream' --exclude='cmake-build-*/' --exclude='.idea/' --exclude='.vscode*/' --exclude='.cache/' --exclude='.npm/' --exclude='.conda/' --exclude='.docker/' $HOME/Synology_Home Michael@100.90.5.80:/volume1/homes/Michael/";
     
     # Standardizing on uni-pull and uni-push for clarity
     # Note: All excludes are on one line to prevent the syntax error you saw
